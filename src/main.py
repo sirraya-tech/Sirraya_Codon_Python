@@ -2,6 +2,7 @@ import asyncio
 import json
 from sdk.codon_sdk import CodonSdk
 from handlers.codon_handler import handle_codon
+from nlp_to_codon import parse_command
 
 def get_user_secret(user_id):
     return {
@@ -10,16 +11,23 @@ def get_user_secret(user_id):
 
 async def main():
     sdk = CodonSdk(get_user_secret)
-    
-    # Create a codon for opening browser with URL payload
+
+    command = input("Type your command: ").strip()
+
+    codon_data = parse_command(command)
+
+    if codon_data["intent"] == "unknown":
+        print("Sorry, I didn't understand that.")
+        return
+
     codon = sdk.create_codon(
-        intent="open_browser",
-        payload={"url": "https://chat.openai.com"},
+        intent=codon_data["intent"],
+        payload=codon_data["payload"],
         meta={},
         user_id="owner123"
     )
-    
-    print("Generated Codon:")
+
+    print("\nGenerated Codon:")
     print(json.dumps(codon, indent=2))
 
     await handle_codon(codon, get_user_secret)
