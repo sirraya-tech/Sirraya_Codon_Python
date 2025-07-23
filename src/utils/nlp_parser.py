@@ -1,37 +1,11 @@
-import webbrowser
-import urllib.parse
 import spacy
-from handlers.intents.open_browser import open_browser
+from handlers.intents import intent_handlers  # ✅ dynamically loaded handlers
 
 nlp = spacy.load("en_core_web_sm")
 
-# -------- Intent Handlers --------
-
-
-async def search_product(payload):
-    product = payload.get("product", "amsaa")
-    platform = payload.get("platform", "amazon")
-    
-    query = urllib.parse.quote_plus(product)
-
-    search_urls = {
-        "amazon": f"https://www.amazon.in/s?k={query}",
-        "flipkart": f"https://www.flipkart.com/search?q={query}",
-        "google": f"https://www.google.com/search?q={query}"
-    }
-
-    url = search_urls.get(platform.lower(), search_urls["google"])
-    print(f"🔎 Searching for '{product}' on {platform.capitalize()}...")
-    webbrowser.open(url)
-
 # -------- Intent Dispatcher --------
-INTENT_HANDLERS = {
-    "open_browser": open_browser,
-    "search_product": search_product,
-}
-
 async def handle_intent(intent_name, payload):
-    handler = INTENT_HANDLERS.get(intent_name)
+    handler = intent_handlers.get(intent_name)
     if handler:
         await handler(payload)
     else:
@@ -82,11 +56,11 @@ def parse_command(text):
         "payload": {}
     }
 
-# -------- Entry Point Example --------
+# -------- Entry Point --------
 async def run_command_from_text(text):
     parsed = parse_command(text)
     await handle_intent(parsed["intent"], parsed["payload"])
 
-# Example usage
+# Test example (uncomment in async context)
 # await run_command_from_text("search for Amsaa saffron on Amazon")
 # await run_command_from_text("open https://amsaa.in")
