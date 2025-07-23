@@ -1,14 +1,12 @@
 import webbrowser
 import urllib.parse
 import spacy
+from handlers.intents.open_browser import open_browser
 
 nlp = spacy.load("en_core_web_sm")
 
 # -------- Intent Handlers --------
-async def open_browser(payload):
-    url = payload.get("url", "https://www.google.com")
-    print(f"🌐 Opening browser with URL: {url}")
-    webbrowser.open(url)
+
 
 async def search_product(payload):
     product = payload.get("product", "amsaa")
