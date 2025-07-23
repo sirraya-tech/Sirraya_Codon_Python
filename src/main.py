@@ -2,7 +2,7 @@ import asyncio
 import json
 from sdk.codon_sdk import CodonSdk
 from handlers.codon_handler import handle_codon
-from nlp_to_codon import parse_command
+from utils.nlp_parser import parse_command
 
 def get_user_secret(user_id):
     return {
